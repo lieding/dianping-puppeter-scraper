@@ -6,8 +6,8 @@
   "scripts": {
     "db:generate": "drizzle-kit generate:sqlite --schema ./src/DB/schema.ts --out ./.migrations",
     "db:migrate": "tsx src/DB/migrate.ts",
-    "start:dev": "tsx src/restaurant.scraper.ts",
-    "start": "tsx -r dotenv/config src/restaurant.scraper.ts",
+    "start:dev": "tsx src/RestaurantList.scraper.ts",
+    "start": "tsx -r dotenv/config RestaurantList.scraper.ts",
     "test:DB": "tsx tests/DB.test.ts"
   },
   "keywords": [],

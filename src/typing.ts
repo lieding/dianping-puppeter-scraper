@@ -9,3 +9,8 @@ export interface IRestaurant {
   addr: string
   commentCnt: number
 }
+
+export type ScraperPathConfigType = {
+  path: string
+  subConfig?: Record<string, string | ScraperPathConfigType>
+}

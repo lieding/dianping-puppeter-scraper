@@ -3,15 +3,21 @@ import puppeteer from 'puppeteer-extra';
 import  * as Restaurant from './DB/manager.restaurant';
 
 // Add stealth plugin and use defaults (all tricks to hide puppeteer usage)
-import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+// import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 // puppeteer.use(StealthPlugin());
 
 const IS_DEV = process.argv[2]?.includes('dev');
 
+const StartURL = IS_DEV ? 'http://localhost:3000' : process.env.RESTAURANT_START_URL ?? '';
+
+const MAX_PAGE = 50;
+
 async function main () {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+    defaultViewport: null,
+  });
   const page = await browser.newPage()
-  // await page.setViewport({ width: 800, height: 600 })
 
   const Cookie = process.env.COOKIE ?? '';
   if (!IS_DEV && Cookie) {
@@ -25,29 +31,33 @@ async function main () {
     }
   }
 
-  await page.goto(IS_DEV ? 'http://localhost:3000' : process.env.START_URL ?? '');
+  await page.goto(StartURL, { timeout: 0 });
+
+  let curPage = 2;
+
+  while (curPage <= MAX_PAGE) {
+    await page.waitForSelector('#shop-all-list', { timeout: 0 });
+
+    const size = await page.evaluate(() => {
+      const els = Array.from(document.querySelectorAll('#shop-all-list ul li'));
+      els.forEach((el) => el.classList.toggle(`target-restaurant`));
+      return els.length;
+    });
   
-  await new Promise(r => setTimeout(r, 5 * 1000));
-
-  await page.goto("https://www.dianping.com/paris/ch10");
-
-  await page.waitForSelector('#shop-all-list');
-
-  const size = await page.evaluate(() => {
-    const els = Array.from(document.querySelectorAll('#shop-all-list ul li'));
-    els.forEach((el) => el.classList.toggle(`target-restaurant`));
-    return els.length;
-  });
-
-  if (size) {
-    const restaurantList = await extractDataFromLiEl(page);
-    if (restaurantList.length) {
-      for (const restaurant of restaurantList) {
-        if (restaurant && !Restaurant.get(restaurant.id)) {
-          Restaurant.insert(restaurant);
+    if (size) {
+      const restaurantList = await extractDataFromLiEl(page);
+      if (restaurantList.length) {
+        for (const restaurant of restaurantList) {
+          if (restaurant && !Restaurant.get(restaurant.id)) {
+            console.log(restaurant.name + 'inserted into databse');
+            Restaurant.insert(restaurant);
+          }
         }
-      }
-    };
+      };
+    }
+    await new Promise(res => setTimeout(res, 30 * 1000));
+    const nextUrl = StartURL + `/p` + (curPage++);
+    await page.goto(nextUrl, { timeout: 0 });
   }
 
   await browser.close()
