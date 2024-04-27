@@ -13,4 +13,14 @@ function test () {
   console.log(RestaurantManager.list());
 }
 
-test();
+// test();
+
+function listAllRestaurants () {
+  const res = RestaurantManager.list();
+  console.log('total restaurants: ', res.length);
+  res.forEach((el) => {
+    console.log(el.id, ' ', el.name);
+  })
+}
+
+listAllRestaurants();
