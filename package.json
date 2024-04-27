@@ -1,0 +1,29 @@
+{
+  "name": "dianping-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "db:generate": "drizzle-kit generate:sqlite --schema ./DB/schema.ts --out ./.migrations",
+    "db:migrate": "tsx DB/migrate.ts",
+    "start:dev": "tsx index.ts",
+    "start": "tsx -r dotenv/config index.ts",
+    "test:DB": "tsx tests/DB.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^9.6.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.30.9",
+    "puppeteer": "^22.7.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "tsx": "^4.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^18.18.0",
+    "drizzle-kit": "^0.20.17"
+  }
+}
