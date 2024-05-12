@@ -1,4 +1,4 @@
-import * as RestaurantManager from '../DB/manager.restaurant'
+import * as RestaurantManager from '../src/DB/manager.restaurant'
 import { randomUUID } from 'node:crypto'
 
 function test () {

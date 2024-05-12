@@ -10,7 +10,23 @@ export interface IRestaurant {
   commentCnt: number
 }
 
+export enum DefinitiveDataTypeEnum {
+  NUMBER = 'number',
+  URL = 'url',
+  SRC = 'src',
+}
+
+type ScraperPathDefinitiveType = {
+  path: string;
+  type: DefinitiveDataTypeEnum
+}
+
+type ScraperHandlerType = {
+  path: string
+  handler: (page: Element | null | undefined) => any
+}
+
 export type ScraperPathConfigType = {
   path: string
-  subConfig?: Record<string, string | ScraperPathConfigType>
+  subConfig?: Record<string, string | ScraperPathDefinitiveType | ScraperHandlerType | ScraperPathConfigType>
 }
