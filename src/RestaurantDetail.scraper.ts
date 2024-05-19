@@ -123,6 +123,8 @@ async function queryRestaurantInfoById (page: Page, id: string) {
     ].join('\n')
   );
 
+  await new Promise(resolve => setTimeout(resolve, 5 * 1000));
+
   await page.evaluate(
     str => {
       (window as any).getPathRuleConfig = function () {
