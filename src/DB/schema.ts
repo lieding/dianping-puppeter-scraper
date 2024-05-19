@@ -1,5 +1,4 @@
 import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
-import { IRestaurant } from "../typing";
 
 const RestaurantConfig = {
   id: text('id').notNull().primaryKey(),

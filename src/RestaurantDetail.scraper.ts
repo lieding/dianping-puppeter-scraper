@@ -14,6 +14,8 @@ enum SegmentEnum {
   RecommendPlatInfo,
   RestaurantImgInfo,
   MenuImgInfo,
+  CommentTagInfo,
+  CommentInfo
 }
 
 const PathRuleConfig: Record<SegmentEnum, ScraperPathConfigType> = {
@@ -74,15 +76,42 @@ const PathRuleConfig: Record<SegmentEnum, ScraperPathConfigType> = {
         }
       }
     }
+  },
+  [SegmentEnum.CommentTagInfo]: {
+    path: '#comment #summaryfilter-wrapper .comment-condition',
+    subConfig: {
+      commentTags: {
+        path: '.content',
+        handler: function (el: Element | null | undefined) {
+          if (!el) return null;
+          const spans = Array.from(el.querySelectorAll('span a'));
+          return spans.map(el => el.textContent);
+        }
+      }
+    }
+  },
+  [SegmentEnum.CommentInfo]: {
+    path: '#comment',
+    subConfig: {
+      comments: {
+        path: '#reviewlist-wrapper',
+        handler: function (el: Element | null | undefined) {
+          if (!el) return null;
+          const lis = Array.from(el.querySelectorAll('li.comment-item div.content p.desc'));
+          return lis.map(el => el.textContent);
+        }
+      }
+    }
   }
 }
 
 async function queryRestaurantInfoById (page: Page, id: string) {
   if (!id || !page) throw new Error('id is required');
 
-  await page.goto('http://localhost:3000/1', { timeout: 0 });
+  await page.goto('https://www.dianping.com/shop/' + id, { timeout: 0 });
 
   await page.waitForSelector('#body .body-content .main', { timeout: 0 });
+  await page.waitForSelector('#body #reviewlist-wrapper', { timeout: 0 });
 
   await page.evaluate((str) => {
     const scriptEl = document.createElement('script');
@@ -130,20 +159,8 @@ async function queryRestaurantInfoById (page: Page, id: string) {
     }
   });
 
-  // if (size) {
-  //   const restaurantList = await extractDataFromLiEl(page);
-  //   if (restaurantList.length) {
-  //     for (const restaurant of restaurantList) {
-  //       if (restaurant && !Restaurant.get(restaurant.id)) {
-  //         console.log(restaurant.name + 'inserted into databse');
-  //         Restaurant.insert(restaurant);
-  //       }
-  //     }
-  //   };
-  // }
-  // await new Promise(res => setTimeout(res, 30 * 1000));
-  // const nextUrl = StartURL + `/p` + (curPage++);
-  // await page.goto(nextUrl, { timeout: 0 });
+  console.log(res);
+
 }
 
 async function main () {
@@ -153,7 +170,7 @@ async function main () {
   });
   const page = await browser.newPage();
 
-  await queryRestaurantInfoById(page, '1');
+  await queryRestaurantInfoById(page, 'jyOBkcaPVQoQf8Wh');
   
   await browser.close()
 }
