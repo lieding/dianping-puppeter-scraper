@@ -1,7 +1,8 @@
-import * as RestaurantManager from '../src/DB/manager.restaurant'
+import * as RestaurantManager from '../src/DB/manager.restaurant';
+import * as RestaurantDetailManager from '../src/DB/manager.restaurantDetail';
 import { randomUUID } from 'node:crypto'
 
-function test () {
+function restaurant () {
   console.log(RestaurantManager.list());
   const id = randomUUID();
   RestaurantManager.insert({
@@ -13,8 +14,6 @@ function test () {
   console.log(RestaurantManager.list());
 }
 
-// test();
-
 function listAllRestaurants () {
   const res = RestaurantManager.list();
   console.log('total restaurants: ', res.length);
@@ -23,4 +22,28 @@ function listAllRestaurants () {
   })
 }
 
-listAllRestaurants();
+function restaurantDetail () {
+  // console.log(RestaurantDetailManager.list());
+  // const id = randomUUID();
+  // RestaurantDetailManager.insert({
+  //   id,
+  //   scoreEnvironment: 3.5, scoreService: 3.5, scoreTaste: 3.5,
+  //   comments: ['test'], address: 'test', timing: 'test',
+  //   commentTags: [], recommendPlats: [{ name: '1', img: 'test' }],
+  //   restaurantImgs: [],
+  //   menuImgs: []
+  // });
+  // console.log(RestaurantDetailManager.list());
+  RestaurantDetailManager.remove('0f6601f5-a6cc-4b6b-bc4c-8c4ab7736f43');
+  console.log(RestaurantDetailManager.list());
+}
+
+function listAllRestaurantDetails () {
+  const res = RestaurantDetailManager.list();
+  console.log('total restaurant details: ', res.length);
+  res.forEach((el) => {
+    console.log(el.id);
+  })
+}
+
+restaurantDetail();

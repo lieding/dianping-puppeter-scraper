@@ -10,6 +10,20 @@ export interface IRestaurant {
   commentCnt: number
 }
 
+export interface IRestaurantDetail {
+  id: string
+  scoreTaste: number
+  scoreEnvironment: number
+  scoreService: number
+  address: string
+  timing: string
+  recommendPlats?: { img: string, name: string }[]
+  restaurantImgs?: string[]
+  menuImgs?: string[]
+  commentTags?: string[]
+  comments?: string[]
+}
+
 export enum DefinitiveDataTypeEnum {
   NUMBER = 'number',
   URL = 'url',
