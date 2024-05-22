@@ -1,8 +1,16 @@
 import { Page } from 'puppeteer';
-import  * as Restaurant from './DB/manager.restaurant';
 import puppeteer from 'puppeteer-extra';
 import { DefinitiveDataTypeEnum, ScraperPathConfigType } from './typing';
 import { getElementBypath, scrapeByConfig } from './utils/scraper';
+import  * as  RestaurantManager from './DB/manager.restaurant';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import fs from 'node:fs/promises'
+
+function write (id: string, data: object) {
+  return fs.writeFile(`./details/${id}.json`, JSON.stringify(data), 'utf8').catch(console.error);
+}
+
+puppeteer.use(StealthPlugin());
 
 const IS_DEV = process.argv[2]?.includes('dev');
 
@@ -32,6 +40,7 @@ const PathRuleConfig: Record<SegmentEnum, ScraperPathConfigType> = {
         }
       },
       address: '.address .map_address #address',
+      timing: '.info-indent .item'
     }
   },
   [SegmentEnum.RecommendPlatInfo]: {
@@ -161,7 +170,14 @@ async function queryRestaurantInfoById (page: Page, id: string) {
     }
   });
 
-  console.log(res);
+  for (let i = 0;i < 10;i++) {
+    await new Promise(resolve => setTimeout(resolve, 3 * 1000));
+    page.evaluate(() => window.scrollTo(0, Math.random() * 100))
+  }
+    
+
+  //console.log(res);
+  await write(id, res);
 
 }
 
@@ -169,10 +185,28 @@ async function main () {
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
+   ignoreDefaultArgs: true,
+    executablePath: `C:\\Users\\Administrator\\.cache\\puppeteer\\chrome\\win64-124.0.6367.78\\chrome-win64\\chrome.exe`,
+    userDataDir: `C:\\Users\\Administrator\\AppData\\Local\\Google\\Chrome for Testing\\User Data\\Default`,
+    args: [
+      '--flag-switches-begin', 
+      '--flag-switches-end',
+      //' --enable-automation',
+      '--no-first-run',
+      '--user-data-dir=C:\\Users\\Administrator\\AppData\\Local\\Google\\Chrome for Testing\\User Data\\Default'
+    ]
   });
-  const page = await browser.newPage();
+  const pages = await browser.pages();
 
-  await queryRestaurantInfoById(page, 'jyOBkcaPVQoQf8Wh');
+  const ids = RestaurantManager.list().map(it => it.id).slice(0, 250);
+
+  for (const id of ids) {
+    try {
+      await queryRestaurantInfoById(pages[0], id);
+    } catch (err) { console.error(err) }
+    await new Promise(resolve => setTimeout(resolve, 30 * 1000));
+  }
+  
   
   await browser.close()
 }
