@@ -8,6 +8,7 @@
     "db:migrate": "tsx src/DB/migrate.ts",
     "start:dev": "tsx src/RestaurantList.scraper.ts",
     "start-detail:dev": "tsx src/RestaurantDetail.scraper.ts",
+    "start:geolocation": "tsx -r dotenv/config src/setDetailGeolocation.cli.ts",
     "start": "tsx -r dotenv/config RestaurantList.scraper.ts",
     "test:DB": "tsx tests/DB.test.ts"
   },
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.18.0",
-    "drizzle-kit": "^0.20.17"
+    "drizzle-kit": "^0.20.17",
+    "geofire-common": "6.0.0"
   }
 }

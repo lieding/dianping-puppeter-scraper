@@ -57,3 +57,11 @@ export function get (id: string) {
     .where(eq(restaurantDetails.id, id))
     .get();
 }
+
+export function setGeolocationInfo (id: string, data: { lat: number, lng: number, geohashIn5: string }) {
+  return DB
+    .update(restaurantDetails)
+    .set({ lat: data.lat, lng: data.lng, geohashIn5: data.geohashIn5 })
+    .where(eq(restaurantDetails.id, id))
+    .run();
+}

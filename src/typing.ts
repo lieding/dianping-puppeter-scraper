@@ -22,6 +22,9 @@ export interface IRestaurantDetail {
   menuImgs?: string[]
   commentTags?: string[]
   comments?: string[]
+  lat?: number
+  lng?: number
+  geohashIn5?: string
 }
 
 export enum DefinitiveDataTypeEnum {

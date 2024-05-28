@@ -42,8 +42,9 @@ function listAllRestaurantDetails () {
   const res = RestaurantDetailManager.list();
   console.log('total restaurant details: ', res.length);
   res.forEach((el) => {
-    console.log(el.id);
+    if (!el.lat || !el.lng || !el.geohashIn5) {
+      const {name} = RestaurantManager.get(el.id) ?? {};
+      console.log(`id: ${el.id}, name: ${name}, address: ${el.address}, lat: ${el.lat}, lng: ${el.lng}, geohashIn5: ${el.geohashIn5}`);
+    }
   })
 }
-
-restaurantDetail();
