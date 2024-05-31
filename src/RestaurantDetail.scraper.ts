@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer-extra';
 import { DefinitiveDataTypeEnum, ScraperPathConfigType } from './typing';
 import { getElementBypath, scrapeByConfig } from './utils/scraper';
 import  * as  RestaurantManager from './DB/manager.restaurant';
+import * as  RestaurantDetailManager from './DB/manager.restaurantDetail';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import fs from 'node:fs/promises'
 
@@ -182,6 +183,9 @@ async function queryRestaurantInfoById (page: Page, id: string) {
 }
 
 async function main () {
+  let restaurantIds = RestaurantManager.list().map(it => it.id);
+  const detailIds = RestaurantDetailManager.list().map(it => it.id);
+  restaurantIds = restaurantIds.filter(it => !detailIds.includes(it));
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
@@ -198,9 +202,7 @@ async function main () {
   });
   const pages = await browser.pages();
 
-  const ids = RestaurantManager.list().map(it => it.id).slice(0, 250);
-
-  for (const id of ids) {
+  for (const id of restaurantIds) {
     try {
       await queryRestaurantInfoById(pages[0], id);
     } catch (err) { console.error(err) }
