@@ -1,6 +1,6 @@
 import { Page } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
-import { DefinitiveDataTypeEnum, ScraperPathConfigType } from './typing';
+import { DefinitiveDataTypeEnum, IRestaurantDetail, ScraperPathConfigType } from './typing';
 import { getElementBypath, scrapeByConfig } from './utils/scraper';
 import  * as  RestaurantManager from './DB/manager.restaurant';
 import * as  RestaurantDetailManager from './DB/manager.restaurantDetail';
@@ -171,15 +171,14 @@ async function queryRestaurantInfoById (page: Page, id: string) {
     }
   });
 
-  for (let i = 0;i < 10;i++) {
+  for (let i = 0;i < 5;i++) {
     await new Promise(resolve => setTimeout(resolve, 3 * 1000));
     page.evaluate(() => window.scrollTo(0, Math.random() * 100))
   }
-    
 
-  //console.log(res);
-  await write(id, res);
-
+  // console.log(res);
+  // await write(id, res);
+  RestaurantDetailManager.insert({ id, ...res } as IRestaurantDetail);
 }
 
 async function main () {
@@ -206,7 +205,7 @@ async function main () {
     try {
       await queryRestaurantInfoById(pages[0], id);
     } catch (err) { console.error(err) }
-    await new Promise(resolve => setTimeout(resolve, 30 * 1000));
+    await new Promise(resolve => setTimeout(resolve, 22 * 1000));
   }
   
   
