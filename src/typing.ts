@@ -47,3 +47,13 @@ export type ScraperPathConfigType = {
   path: string
   subConfig?: Record<string, string | ScraperPathDefinitiveType | ScraperHandlerType | ScraperPathConfigType>
 }
+
+export interface IPlace {
+  id: string
+  name: string
+  commentCnt: number
+  type: string
+  avgPrice: number | null
+  area: string
+  img: string
+}
