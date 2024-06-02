@@ -171,7 +171,7 @@ async function queryRestaurantInfoById (page: Page, id: string) {
     }
   });
 
-  for (let i = 0;i < 5;i++) {
+  for (let i = 0;i < 10;i++) {
     await new Promise(resolve => setTimeout(resolve, 3 * 1000));
     page.evaluate(() => window.scrollTo(0, Math.random() * 100))
   }
@@ -205,7 +205,6 @@ async function main () {
     try {
       await queryRestaurantInfoById(pages[0], id);
     } catch (err) { console.error(err) }
-    await new Promise(resolve => setTimeout(resolve, 22 * 1000));
   }
   
   
