@@ -10,6 +10,7 @@
     "start-detail:dev": "tsx src/RestaurantDetail.scraper.ts",
     "start:geolocation": "tsx -r dotenv/config src/setDetailGeolocation.cli.ts",
     "start": "tsx -r dotenv/config RestaurantList.scraper.ts",
+    "start:place": "tsx -r dotenv/config src/PlaceList.scraper.ts",
     "test:DB": "tsx tests/DB.test.ts"
   },
   "keywords": [],

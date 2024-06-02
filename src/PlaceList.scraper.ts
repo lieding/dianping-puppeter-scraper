@@ -14,6 +14,16 @@ async function main () {
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
+    ignoreDefaultArgs: true,
+    executablePath: `C:\\Users\\Administrator\\.cache\\puppeteer\\chrome\\win64-124.0.6367.78\\chrome-win64\\chrome.exe`,
+    userDataDir: `C:\\Users\\Administrator\\AppData\\Local\\Google\\Chrome for Testing\\User Data\\Default`,
+    args: [
+      '--flag-switches-begin', 
+      '--flag-switches-end',
+      //' --enable-automation',
+      '--no-first-run',
+      '--user-data-dir=C:\\Users\\Administrator\\AppData\\Local\\Google\\Chrome for Testing\\User Data\\Default'
+    ]
   });
   const page = await browser.newPage()
 
@@ -41,8 +51,11 @@ async function main () {
         }
       };
     }
-    await new Promise(res => setTimeout(res, 30 * 1000));
-    const nextUrl = StartURL + `/p` + (curPage++);
+    for (let i = 0;i < 8;i++) {
+      await new Promise(resolve => setTimeout(resolve, 3 * 1000));
+      page.evaluate(() => window.scrollTo(0, Math.random() * 400))
+    }
+    const nextUrl = StartURL + 'p' + (curPage++);
     await page.goto(nextUrl, { timeout: 0 });
   }
 
