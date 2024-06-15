@@ -155,7 +155,10 @@ async function queryRestaurantInfoById (page: Page, id: string) {
     })
   );
 
-  const res = await page.evaluate(() => {
+  for (let i = 0;i < 10;i++) {
+    await new Promise(resolve => setTimeout(resolve, 3 * 1000));
+    page.evaluate(() => window.scrollTo(0, Math.random() * 100))
+  }const res = await page.evaluate(() => {
     try {
       const mainDivEl = document.querySelector('#body .body-content .main');
       const Config = (window as any).getPathRuleConfig() as typeof PathRuleConfig;
@@ -169,16 +172,25 @@ async function queryRestaurantInfoById (page: Page, id: string) {
     } catch (err) {
       return JSON.stringify(err);
     }
-  });
-
-  for (let i = 0;i < 10;i++) {
-    await new Promise(resolve => setTimeout(resolve, 3 * 1000));
-    page.evaluate(() => window.scrollTo(0, Math.random() * 100))
-  }
+  }) as Record<SegmentEnum, Record<string, any>>;
 
   // console.log(res);
   // await write(id, res);
-  RestaurantDetailManager.insert({ id, ...res } as IRestaurantDetail);
+  const input: IRestaurantDetail = {
+    id,
+    scoreEnvironment: res[SegmentEnum.BasicInfo].briefInfo?.scoreEnvironment ?? 0,
+    scoreTaste: res[SegmentEnum.BasicInfo].briefInfo?.scoreTaste ?? 0,
+    scoreService: res[SegmentEnum.BasicInfo].briefInfo?.scoreService ?? 0,
+    address: res[SegmentEnum.BasicInfo].address,
+    timing: res[SegmentEnum.BasicInfo].timing,
+    recommendPlats: res[SegmentEnum.RecommendPlatInfo]?.recommendPlats ?? [],
+    restaurantImgs: res[SegmentEnum.RestaurantImgInfo]?.restaurantImgs ?? [],
+    menuImgs: res[SegmentEnum.MenuImgInfo]?.menuImgs ?? [],
+    commentTags: res[SegmentEnum.CommentTagInfo]?.commentTags ?? [],
+    comments: res[SegmentEnum.CommentInfo]?.comments ?? []
+  };
+  await RestaurantDetailManager.insert(input);
+
 }
 
 async function main () {
