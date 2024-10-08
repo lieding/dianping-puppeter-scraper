@@ -8,7 +8,7 @@ function download(href, title) {
 async function start () {
   window.curPage = 1;
   const MAX_PAGE = 2;
-  const list = []
+  window.list = []
   while (curPage <= MAX_PAGE) {
     const size = tag();
     if (size === 0) break;
@@ -17,6 +17,15 @@ async function start () {
     await new Promise(resolve => setTimeout(resolve, 30 * 1000));
     nextPage();
   }
+  const content = list.map(el => `${el.title}|${el.comment}`).join('\n');
+  const blob = new Blob(['title|comment\n' + content]);
+  const href = URL.createObjectURL(blob);
+  download(href, 'data.csv');
+  URL.revokeObjectURL(href);
+}
+
+function startDownload () {
+  curPage = 999999;
   const content = list.map(el => `${el.title}|${el.comment}`).join('\n');
   const blob = new Blob(['title|comment\n' + content]);
   const href = URL.createObjectURL(blob);
